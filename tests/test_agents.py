@@ -122,6 +122,33 @@ def test_on_blocked_une_fois():
     assert len(got) == 2 and got[0].address == "t1"
 
 
+def test_on_unblocked_quand_l_attente_finit():
+    # notification « X attend » restée sur le téléphone après la réponse (2026-11-16) : le serveur doit
+    # signaler la fin de l'attente (répondu, ou terminal fermé) pour qu'elle soit effacée
+    hc, b = board([term("t1", "idle"), term("t2", "idle")])
+    fini = []
+    b.on_unblocked(fini.append)
+    hc.terminals = [term("t1", "blocked"), term("t2", "blocked")]
+    hc.fire()
+    assert fini == []
+    hc.terminals = [term("t1", "working"), term("t2", "blocked")]
+    hc.fire()
+    assert fini == ["t1"]
+    hc.terminals = [term("t1", "working")]  # t2 fermé pendant qu'il attendait
+    hc.fire()
+    assert fini == ["t1", "t2"]
+    hc.fire()
+    assert fini == ["t1", "t2"]  # une fois par fin d'attente
+
+
+def test_on_unblocked_rien_au_premier_instantane():
+    hc, b = board([term("t1", "idle")])
+    fini = []
+    b.on_unblocked(fini.append)
+    hc.fire("missed")
+    assert fini == []
+
+
 def test_reconnexion_ne_renotifie_pas():
     hc, b = board([term("t1", "blocked")])
     got = []

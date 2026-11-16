@@ -172,7 +172,7 @@ def test_2_icone_terminal_dans_un_cadre_arrondi_vert():
 
 
 def test_cache_du_service_worker_incremente():
-    assert 'const CACHE = "herdr-coquille-v38";' in (STATIC / "sw.js").read_text()
+    assert 'const CACHE = "herdr-coquille-v39";' in (STATIC / "sw.js").read_text()
 
 
 def test_4_bandeau_needs_you_suit_l_etat():

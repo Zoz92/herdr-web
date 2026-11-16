@@ -202,6 +202,9 @@ def test_pem_de_lenv_est_accepte_par_le_serveur(tmp_path):
     class Board:
         def on_blocked(self, cb):
             pass
+
+        def on_unblocked(self, cb):
+            pass
     bw = FakeBw(tmp_path)
     go(tmp_path, bw, FakeRun())
     env = parse_env_systemd((tmp_path / ".config/herdr-web/env").read_text())

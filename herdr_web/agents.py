@@ -481,6 +481,7 @@ class AgentBoard:
         self._prev: dict[str, str] | None = None  # None tant qu'aucun instantané
         self._subs = []
         self._blocked_cbs = []
+        self._unblocked_cbs = []  # reçoivent l'adresse : un agent fermé n'a plus d'Agent
         hc.on_event(self._on_event)
         hc.on_state(self._on_state)
 
@@ -493,6 +494,10 @@ class AgentBoard:
 
     def on_blocked(self, cb):
         self._blocked_cbs.append(cb)
+
+    def on_unblocked(self, cb):
+        """Fin d'une attente (répondu, ou terminal fermé) : la notification « X attend » est périmée."""
+        self._unblocked_cbs.append(cb)
 
     def _on_event(self, ev):
         if ev.get("method") in ("event", "missed"):
@@ -658,8 +663,9 @@ class AgentBoard:
                 del cache[path]
         for pid in [p for p in self._sessions if p not in pids]:
             del self._sessions[pid]
+        etats = {a.address: a.state for a in agents}
         with self._lock:
-            prev, self._prev = self._prev, {a.address: a.state for a in agents}
+            prev, self._prev = self._prev, etats
             changed = agents != self._agents
             self._agents = agents
             self._spaces = spaces
@@ -667,6 +673,9 @@ class AgentBoard:
             for a in agents:
                 if a.state == "blocked" and prev.get(a.address) != "blocked":
                     self._call(self._blocked_cbs, a)
+            for addr, avant in prev.items():
+                if avant == "blocked" and etats.get(addr) != "blocked":
+                    self._call(self._unblocked_cbs, addr)
         if changed:
             self._call(self._subs, list(agents))
 

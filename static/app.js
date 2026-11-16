@@ -2206,6 +2206,7 @@ function finVocal(v, envoyer) {
 function surAgents(liste) {
   const avant = new Map(S.agents.map((a) => [a.address, a]));
   S.agents = Array.isArray(liste) ? liste : [];
+  if (Array.isArray(liste)) fermerNotifsPerimees();
   if (!S.premier) {
     for (const a of S.agents) {
       const p = avant.get(a.address);
@@ -2317,6 +2318,22 @@ async function chargerReglages() {
     if (d && d.handy) appliquerReglagesServeur({ handy: d.handy.active, nom_affiche: d.nom_affiche, langue: d.langue });
     return d;
   } catch (_) { return null; } // ancien serveur : la voix reste comme avant
+}
+
+// notification « X attend » d'un agent qui n'attend plus (répondu ici, dans herdr-app, ou fermé) :
+// fermée dès que la page le voit ; seul un clic la fermait (constaté le 2026-11-16). Le serveur envoie
+// aussi un push « clear », mais il peut se perdre ou arriver avant celui qu'il efface.
+async function fermerNotifsPerimees() {
+  if (!("serviceWorker" in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg || !reg.getNotifications) return;
+    const attend = new Set(S.agents.filter((a) => a.state === "blocked").map((a) => a.address));
+    for (const n of await reg.getNotifications()) {
+      const addr = n.data && n.data.addr;
+      if (addr && !attend.has(addr)) n.close();
+    }
+  } catch (_) { /* navigateur sans getNotifications : elles restent jusqu'au clic */ }
 }
 
 async function notifierNeedsYou(a) { // réglage par appareil ; la permission a été donnée au clic sur la coche

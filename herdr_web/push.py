@@ -103,11 +103,19 @@ class Push:
             self._write([s for s in self._read() if s.get("endpoint") not in endpoints])
 
     def notify(self, agent) -> int:
+        nom = getattr(agent, 'label', '') or agent.name or agent.title or agent.address
+        return self._envoyer({"title": textes.t(self.langue(), "push.attend", nom=nom),
+                              "body": agent.msg, "addr": agent.address})
+
+    def clear(self, addr: str) -> int:
+        """L'agent n'attend plus : le service worker ferme sa notification (tag = adresse). Sans cela
+        elle restait sur le téléphone après une réponse donnée ailleurs (constaté le 2026-11-16)."""
+        return self._envoyer({"clear": addr})
+
+    def _envoyer(self, charge: dict) -> int:
         with self._lock:
             subs = self._read()
-        nom = getattr(agent, 'label', '') or agent.name or agent.title or agent.address
-        data = json.dumps({"title": textes.t(self.langue(), "push.attend", nom=nom),
-                           "body": agent.msg, "addr": agent.address}, ensure_ascii=False)
+        data = json.dumps(charge, ensure_ascii=False)
         ok, gone = 0, set()
         for sub in subs:
             try:
@@ -139,10 +147,17 @@ class NotifyWorker:
         self._t.start()
 
     def submit(self, agent) -> None:
+        self._poser(("notify", agent), agent.address)
+
+    def clear(self, addr: str) -> None:
+        # même file que submit : un effacement ne double jamais l'attente qu'il efface
+        self._poser(("clear", addr), addr)
+
+    def _poser(self, item, addr) -> None:
         try:
-            self._q.put_nowait(agent)
+            self._q.put_nowait(item)
         except queue.Full:  # jamais bloquant pour le rappel de AgentBoard
-            log.warning("file de notifications pleine : %s abandonné", agent.address)
+            log.warning("file de notifications pleine : %s abandonné", addr)
 
     def _run(self):
         while True:
@@ -150,7 +165,11 @@ class NotifyWorker:
             try:
                 if a is self._stop:
                     return
-                self._push.notify(a)
+                quoi, x = a
+                if quoi == "clear":
+                    self._push.clear(x)
+                else:
+                    self._push.notify(x)
             except Exception as e:  # le fil ne doit jamais mourir
                 log.warning("notification push échouée (%s)", type(e).__name__)
             finally:

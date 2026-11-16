@@ -600,6 +600,33 @@ const SCENARIOS = {
     return out;
   },
 
+  // notification « X attend » restée sur le téléphone après la réponse (2026-11-16) : la page ferme
+  // celles des agents qui n'attendent plus, à chaque lot d'agents reçu
+  async "notif-resolue"() {
+    reponses = serveurDeBase;
+    const notifs = ["t1", "t2", null].map((addr) => ({ data: addr ? { addr } : {}, ferme: false,
+      close() { this.ferme = true; } }));
+    ctx.navigator.serviceWorker = { getRegistration: async () => ({
+      getNotifications: async () => notifs.filter((n) => !n.ferme), showNotification: async () => {} }) };
+    const lot = (...as) => run(`surAgents(${JSON.stringify(as)});`);
+    S().agents = [agent("t1", { state: "blocked" }), agent("t2", { state: "blocked" })];
+    S().spaces = SPACES;
+    run("squelette(); rendreCote(); rendreAccueil();");
+    S().premier = false;
+    const ouvertes = () => notifs.filter((n) => !n.ferme).map((n) => n.data.addr || null);
+    const out = {};
+    lot(agent("t1", { state: "blocked" }), agent("t2", { state: "blocked" }));
+    await souffle();
+    out.attente = ouvertes();
+    lot(agent("t1", { state: "working" }), agent("t2", { state: "blocked" })); // t1 répondu (ici ou ailleurs)
+    await souffle();
+    out.repondu = ouvertes();
+    lot(agent("t1", { state: "working" }));                                   // t2 fermé
+    await souffle();
+    out.ferme = ouvertes();
+    return out;
+  },
+
   // « vu » partagé : ouvrir un agent pose herdr.seen (POST /seen), une fois par tour, jamais un sous-agent
   // langue de la page (brief langue-web, 2026-11-15) : sélecteur dans Réglages › Affichage, réglage serveur
   // partagé ; un changement recharge la page, après le prochain envoi s'il y a un brouillon

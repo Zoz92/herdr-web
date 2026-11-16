@@ -161,6 +161,9 @@ def test_make_push_sans_cle_desactive(tmp_path):
         def on_blocked(self, cb):
             self.cbs.append(cb)
 
+        def on_unblocked(self, cb):
+            self.cbs.append(cb)
+
     b = Board()
     assert make_push({"HERDR_WEB_STATE": str(tmp_path)}, b) is None and b.cbs == []
 
@@ -181,9 +184,13 @@ def test_make_push_branche_on_blocked(tmp_path):
         def on_blocked(self, cb):
             self.cbs.append(cb)
 
+        def on_unblocked(self, cb):
+            self.fins.append(cb)
+
     b = Board()
+    b.fins = []
     p = make_push({"HERDR_WEB_VAPID_KEY": pem(), "HERDR_WEB_STATE": str(tmp_path / "s")}, b)
-    assert p is not None and len(b.cbs) == 1
+    assert p is not None and len(b.cbs) == 1 and len(b.fins) == 1
     sent = []
     p._send = lambda **kw: sent.append(kw)
     p.subscribe(sub())
@@ -251,3 +258,34 @@ def test_sujet_https_signe_pour_de_vrai_mais_pas_avec_un_port():
     assert "Authorization" in v.sign({**claims, "sub": "https://herdr.example.org"})
     with pytest.raises(VapidException):
         v.sign({**claims, "sub": "https://herdr.example.org:10370"})
+
+
+def test_clear_envoie_l_adresse_a_effacer(mk):
+    # la notification « X attend » restait après la réponse (2026-11-16) : le service worker la ferme
+    p, f = mk()
+    p.subscribe(sub(1))
+    p.subscribe(sub(2))
+    assert p.clear("t1") == 2
+    assert [json.loads(c["data"]) for c in f.calls] == [{"clear": "t1"}, {"clear": "t1"}]
+    assert f.calls[0]["timeout"] == 10 and f.calls[0]["ttl"] == 3600
+
+
+def test_clear_retire_les_abonnements_morts(mk, tmp_path):
+    p, _ = mk(Fake(fail={"https://push.test/1": 410}))
+    p.subscribe(sub(1))
+    p.subscribe(sub(2))
+    assert p.clear("t1") == 1
+    assert [x["endpoint"] for x in stored(tmp_path)] == ["https://push.test/2"]
+
+
+def test_fil_garde_l_ordre_attente_puis_effacement(mk):
+    p, _ = mk()
+    ordre = []
+    p.notify = lambda a: ordre.append(("notify", a.address))
+    p.clear = lambda addr: ordre.append(("clear", addr))
+    w = NotifyWorker(p)
+    w.submit(agent(addr="t1"))
+    w.clear("t1")
+    w.submit(agent(addr="t1"))
+    assert w.join(timeout=3) and ordre == [("notify", "t1"), ("clear", "t1"), ("notify", "t1")]
+    w.stop()

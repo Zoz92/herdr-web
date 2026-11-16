@@ -36,7 +36,9 @@ def make_push(env, board):
     state = Path(env.get("HERDR_WEB_STATE") or Path.home() / ".local/state/herdr-web")
     push = Push(state, pem, env.get("HERDR_WEB_VAPID_SUBJECT") or "mailto:herdr-web@localhost")
     # le rappel ne fait que poser dans une file : le réseau part d'un fil dédié, hors refresh
-    board.on_blocked(NotifyWorker(push).submit)
+    fil = NotifyWorker(push)
+    board.on_blocked(fil.submit)
+    board.on_unblocked(fil.clear)
     return push
 
 

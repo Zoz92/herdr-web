@@ -1,5 +1,5 @@
 // Service worker : coquille en cache (réseau d'abord), notifications Web Push.
-const CACHE = "herdr-coquille-v38";
+const CACHE = "herdr-coquille-v39";
 const COQUILLE = ["/", "/static/style.css", "/static/i18n/en.js", "/static/i18n/fr.js", "/static/i18n/i18n.js", "/static/md.js", "/static/commandes.js", "/static/palette.js", "/static/app.js",
                   "/static/vendor/qrcode/qrcode.js",
                   "/static/herdr.svg", "/static/os-logo.png", "/static/prog-claude.svg", "/static/prog-terminal.svg",
@@ -32,6 +32,12 @@ self.addEventListener("fetch", (e) => {
 self.addEventListener("push", (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (_) { d = {}; }
+  // l'agent n'attend plus (répondu ici, au PC, ou fermé) : sa notification « X attend » part
+  if (d.clear) {
+    e.waitUntil(self.registration.getNotifications({ tag: d.clear })
+      .then((ns) => ns.forEach((n) => n.close())));
+    return;
+  }
   e.waitUntil(self.registration.showNotification(d.title || "herdr", {
     body: d.body || "", icon: "/static/icon-192.png", tag: d.addr || "herdr",
     data: { addr: d.addr || "" },
