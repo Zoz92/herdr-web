@@ -1,0 +1,11 @@
+{"type":"mode","mode":"default"}
+{"type":"attachment","timestamp":"2026-01-01T10:00:00.000Z"}
+{"type":"user","timestamp":"2026-01-01T10:00:01.000Z","message":{"role":"user","content":"Crée un fichier vide"}}
+{"type":"assistant","timestamp":"2026-01-01T10:00:02.000Z","message":{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"x"}]}}
+{"type":"assistant","timestamp":"2026-01-01T10:00:03.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"touch a.txt","description":"Create"}}]}}
+{"type":"user","timestamp":"2026-01-01T10:00:04.000Z","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"(no output)","is_error":false}]}}
+{"type":"user","isMeta":true,"timestamp":"2026-01-01T10:00:05.000Z","message":{"role":"user","content":"rappel interne"}}
+{"type":"assistant","timestamp":"2026-01-01T10:00:06.000Z","message":{"role":"assistant","content":[{"type":"text","text":"Fichier créé."}]}}
+{"type":"assistant","timestamp":"2026-01-01T10:00:07.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu2","name":"Read","input":{"file_path":"/work/a.txt"}}]}}
+{"type":"assistant","timestamp":"2026-01-01T10:00:08.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu3","name":"AskUserQuestion","input":{"questions":[{"question":"Couleur ?","options":[{"label":"Rouge"},{"label":"Vert"}]}]}}]}}
+{"type":"user","timestamp":"2026-01-01T10:00:09.000Z","message":{"role":"user","content":"Regarde /home/user/.local/state/herdr-core/default/files/t1g/carre.png"}}

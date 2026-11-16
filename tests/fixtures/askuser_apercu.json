@@ -1,0 +1,43 @@
+{
+ "id": "toolu_01A5NChutFVFM3BMXqJ3mboL",
+ "input": {
+  "questions": [
+   {
+    "question": "Quelle mise en page ?",
+    "header": "Mise en page",
+    "multiSelect": false,
+    "options": [
+     {
+      "label": "Onglets",
+      "description": "Rubriques à gauche",
+      "preview": "+---------------+-----------------------+\n| > Voix        | Volume  [=======--]   |\n|   Notifs      | Vitesse [====-----]   |\n|   Affichage   | Langue  [ Français ]  |\n|               |                       |\n+---------------+-----------------------+"
+     },
+     {
+      "label": "Cartes",
+      "description": "Une colonne",
+      "preview": "+-----------------------+\n| [ Voix              ] |\n+-----------------------+\n| [ Notifications     ] |\n+-----------------------+\n| [ Affichage         ] |\n+-----------------------+"
+     }
+    ]
+   },
+   {
+    "question": "Quels modules ?",
+    "header": "Modules",
+    "multiSelect": true,
+    "options": [
+     {
+      "label": "Voix",
+      "description": "Module voix"
+     },
+     {
+      "label": "QR",
+      "description": "Module QR"
+     },
+     {
+      "label": "Langue",
+      "description": "Module langue"
+     }
+    ]
+   }
+  ]
+ }
+}

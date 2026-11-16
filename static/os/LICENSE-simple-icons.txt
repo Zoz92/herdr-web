@@ -1,0 +1,14 @@
+Icônes de ce dossier : tracés du paquet npm `simple-icons` version 16.38.0 (figée), licence CC0-1.0
+(domaine public) — https://github.com/simple-icons/simple-icons, texte complet : LICENSE.md du paquet.
+Couleur de marque appliquée au remplissage ; noir (almalinux, macos, steamos) remplacé par #CDD6F4 et
+toute teinte sous 4,5:1 de contraste contre #1E1E2E (Kali, CentOS, Debian, Gentoo, Alpine, Raspberry Pi OS, Void, NixOS, Ubuntu, Arch…)
+éclaircie vers le blanc par pas de 5 % jusqu'à 4,5:1, pour rester lisible à 11 px sur fond sombre. Les noms et logos restent des marques de leurs
+propriétaires : usage d'identification de la distribution uniquement.
+
+Tracés maison, sans marque (CC0, ce dépôt) :
+  windows.svg  quatre vitres bleues stylisées (Simple Icons ne porte pas le logo Windows)
+  bazzite.svg  pastille aux initiales « Bz » (absent de Simple Icons)
+  generic.svg  ordinateur de bureau, repli quand rien ne se lit
+steamos.svg  = glyphe « Steam » de Simple Icons (SteamOS absent).
+GLF-OS : static/os-logo.png (existant, hors Simple Icons).
+  quantum.svg  sphère de Bloch maison (easter egg : nom de machine « quantum/quantique/qubit/qpu »), mauve #CBA6F7

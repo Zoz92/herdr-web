@@ -1,0 +1,20 @@
+● Voici les étapes que je propose :
+  1. Créer le fichier
+  2. Vérifier son contenu
+  3. Le supprimer
+
+  Je commence par la première.
+
+╭──────────────────────────────────────────────────────────╮
+ Bash command
+
+   touch fichier-oui.txt
+   Crée le fichier fichier-oui.txt
+
+ Do you want to proceed?
+ ❯ 1. Yes
+   2. Yes, and always allow access to fichier-oui.txt from this project
+   3. Yes, and switch to auto mode for this session
+   4. No
+
+ Esc to cancel · Tab to amend

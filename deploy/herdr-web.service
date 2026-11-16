@@ -1,0 +1,37 @@
+[Unit]
+Description=herdr-web : piloter les agents herdr-core depuis un téléphone
+# un tailnet en retard (bind impossible) ne doit pas faire abandonner systemd après 5 essais
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/herdr-web/env
+# @REPO@ est remplacé par l'installeur par le chemin du dépôt. PYTHONPATH (plutôt que
+# WorkingDirectory) : le paquet herdr_web et static/ se trouvent par le chemin du module,
+# sans dépendre du dossier courant du service.
+Environment=PYTHONPATH=@REPO@
+# hc, herdr-app, ffmpeg : /run/current-system/sw/bin ; Handy est lu en chemin absolu dans son .desktop
+# /run/wrappers/bin EN TÊTE : si le core hc est absent, c'est `hc connect` lancé d'ici qui démarre
+# `herdr-core serve`, et serve fige CE PATH pour tous ses terminaux — sans les wrappers, `sudo` y
+# serait le binaire sans setuid (mesuré le 2026-11-15, serve démarré par herdr-web à 09:07:23).
+Environment=PATH=/run/wrappers/bin:/run/current-system/sw/bin:%h/.nix-profile/bin:%h/.local/bin
+ExecStart=%h/.local/share/herdr-web/pyenv/bin/python -m herdr_web --bind ${HERDR_WEB_BIND} --cert ${HERDR_WEB_CERT} --key ${HERDR_WEB_KEY}
+Restart=on-failure
+RestartPreventExitStatus=78
+RestartSec=3
+# espacement croissant jusqu'à 60 s : un port durablement pris ou un env absent ne boucle pas toutes les 3 s
+RestartSteps=5
+RestartMaxDelaySec=60s
+# mémoire (relecture finale, I2) : glibc ouvre une arène par fil, et un gros fil de discussion
+# relu faisait grimper le RSS de ~90 Mo par lecture ; deux arènes et un plafond ferme
+Environment=MALLOC_ARENA_MAX=2
+MemoryHigh=400M
+MemoryMax=800M
+NoNewPrivileges=yes
+# pas de PrivateTmp : dans une unit UTILISATEUR il crée un espace de noms utilisateur, d'où
+# /proc/<pid>/cwd des agents devient illisible (mesuré le 2026-11-14, rc=1) et la branche affichée
+# retombe sur le cwd de hc, parfois périmé. Les fichiers temporaires restent privés par UMask.
+UMask=0077
+
+[Install]
+WantedBy=default.target

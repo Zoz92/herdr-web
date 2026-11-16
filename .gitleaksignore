@@ -1,0 +1,4 @@
+# Faux positif de la règle generic-api-key : deux noms de classes enchaînés dans le code minifié de
+# xterm.js (code tiers sous static/vendor/), pas un secret.
+# Empreinte sans commit (fichier:règle:ligne), lue depuis la racine du dépôt par `gitleaks dir .` et `gitleaks git .`
+static/vendor/xterm/xterm.js:generic-api-key:1

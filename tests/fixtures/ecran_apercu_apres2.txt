@@ -1,0 +1,32 @@
+
+ ▐▛███▛█   Claude Code v2.1.325
+▝▜██████▀  Haiku 5.5 · Claude Ultra
+ ▝▝   ▝▝   ~/Claude/herdr-web
+
+
+❯ Test de l'interface, ne fais rien d'autre : appelle UNE fois l'outil AskUserQuestion avec DEUX questions. Q1 « Quelle mise en page ? » (header Mise en page, multiSelect false), 2 options, chacune
+  avec un champ preview en ASCII sur 6 lignes : option « Onglets » (description « Rubriques a gauche ») preview = une boite ASCII avec une colonne de rubriques a gauche (Voix, Notifications,
+  Affichage) et un contenu a droite ; option « Cartes » (description « Une colonne ») preview = une boite ASCII avec trois cartes empilees. Q2 « Quels modules ? » (header Modules, multiSelect true)
+  options Voix, QR, Langue, sans preview. Ensuite attends la reponse et recopie-la.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+←  ☐ Mise en page  ☐ Modules  ✔ Submit  →
+
+Quelle mise en page ?
+
+  1. Onglets                      ┌───────────────────────────────────────────┐
+❯ 2. Cartes                       │ +-----------------------+                 │
+                                  │ | [ Voix              ] |                 │
+                                  │ +-----------------------+                 │
+                                  │ | [ Notifications     ] |                 │
+                                  │ +-----------------------+                 │
+                                  │ | [ Affichage         ] |                 │
+                                  │ +-----------------------+                 │
+                                  └───────────────────────────────────────────┘
+
+                                  Notes: press n to add notes
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Chat about this
+
+Enter to select · ↑/↓ to navigate · n to add notes · Tab to switch questions · Esc to cancel

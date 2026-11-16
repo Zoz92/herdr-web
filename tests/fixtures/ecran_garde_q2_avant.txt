@@ -1,0 +1,23 @@
+
+ ▐▛███▛█   Claude Code v2.1.325
+▝▜██████▀  Haiku 5.5 · Claude Ultra
+ ▝▝   ▝▝   ~/Claude/herdr-web
+
+
+❯ Test de l'interface, ne fais rien d'autre : appelle UNE fois l'outil AskUserQuestion avec DEUX questions, sans preview. Q1 « Couleur ? » (header Couleur, multiSelect false) options Rouge, Vert. Q2
+  « Langages ? » (header Langages, multiSelect true) options Python, Rust. Puis recopie la reponse.
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+←  ☐ Couleur  ☐ Langages  ✔ Submit  →
+
+Langages ?
+
+❯ 1. [ ] Python
+         Choisir Python
+  2. [ ] Rust
+         Choisir Rust
+  3. [ ] Type something
+     Submit
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  4. Chat about this
+
+Enter to select · Tab/Arrow keys to navigate · Esc to cancel

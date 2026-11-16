@@ -1,0 +1,966 @@
+{
+ "claude_version": "2.1.325",
+ "measured": "2026-11-14",
+ "source": "https://code.claude.com/docs/en/commands.md (tableau « All commands », lu le 2026-11-14)",
+ "interactive_rule": "texte de la doc de la commande : « opens/shows … picker|dialog|menu|wizard|interface|panel|view », « picker », « wizard », « interactive list|lessons|picker|wizard » (hors mention du picker d'une autre commande et hors phrases « On v… » sur des versions passées)",
+ "model_forms": [
+  "opus",
+  "sonnet",
+  "haiku"
+ ],
+ "commands": [
+  {
+   "name": "add-dir",
+   "args": "<path>",
+   "description": "Add a working directory for file access.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "advisor",
+   "args": "[model|off]",
+   "description": "Enable or disable the advisor tool, which consults a second model for guidance at key moments during a task.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "agents",
+   "args": "",
+   "description": "Print a reminder to ask Claude to create or manage subagents, or to edit .claude/agents/ or ~/.claude/agents/ directly.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "artifact-capabilities",
+   "args": "",
+   "description": "Load the reference for the runtime capabilities a published artifact can use, such as calling your connectors or offering a file download, including which ones your account has.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "artifact-diagramming",
+   "args": "",
+   "description": "Load diagramming guidance for Claude to follow in artifacts: when a diagram helps, what to draw, and how to write inline SVG that stays legible in light and dark themes.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "artifacts",
+   "args": "",
+   "description": "List the artifacts you own or that are shared with you, then attach one to the session, open it in your browser, or copy its link.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "auto-mode-setup",
+   "args": "",
+   "description": "Draft autoMode.environment entries from your project and recent sessions, then review the draft and save it to your user settings.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "autocompact",
+   "args": "[auto|<tokens>]",
+   "description": "Set the auto-compact window: how full the context window gets before Claude Code compacts automatically.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "autofix-pr",
+   "args": "[prompt]",
+   "description": "Spawn a cloud session that watches the current branch's PR and pushes fixes when CI fails or reviewers leave comments.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "background",
+   "args": "[prompt]",
+   "description": "Detach the current session to run as a background agent and free this terminal.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "batch",
+   "args": "<instruction>",
+   "description": "Orchestrate large-scale changes across a codebase in parallel.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "branch",
+   "args": "[name]",
+   "description": "Create a branch of the current conversation at this point, so you can try a different direction without losing the conversation as it stands.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "btw",
+   "args": "[question]",
+   "description": "Ask a side question about the current session without adding to the conversation.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "bug",
+   "args": "[report]",
+   "description": "Report a bug or share your conversation.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "cd",
+   "args": "<path>",
+   "description": "Move this session to a new working directory, keeping the conversation.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "chrome",
+   "args": "",
+   "description": "Configure Claude in Chrome settings",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "claude-api",
+   "args": "[migrate|upgrade|api-version|managed-agents-onboard|managed-agents-secure|prompt-audit|cost-optimize|latency-optimize|build-eval|hillclimb|preserved-thinking-migration]",
+   "description": "Load Claude API and Managed Agents reference material for your project's language.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "claude-in-chrome",
+   "args": "[task]",
+   "description": "Have Claude carry out a task in your browser, such as testing a page, filling a form, or reading console logs, through Claude in Chrome.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "clear",
+   "args": "[name]",
+   "description": "Start a new conversation with empty context.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": [
+    "reset",
+    "new"
+   ]
+  },
+  {
+   "name": "code-review",
+   "args": "[low|medium|high|xhigh|max|ultra] [--fix] [--comment] [--max-findings n|all|default] [pr#|branch|path]",
+   "description": "Review the current diff, or a PR number, branch, or path you pass, for correctness bugs.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "color",
+   "args": "[color|default]",
+   "description": "Set the prompt bar color for the current session.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "compact",
+   "args": "[instructions]",
+   "description": "Free up context by summarizing the conversation so far.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "config",
+   "args": "[key=value ...]",
+   "description": "Open the Settings interface to adjust preferences.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "context",
+   "args": "[all]",
+   "description": "Visualize current context usage as a colored grid.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "copy",
+   "args": "[N]",
+   "description": "Copy the last assistant response to clipboard.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "cost",
+   "args": "",
+   "description": "Alias for /usage",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "dataviz",
+   "args": "[request]",
+   "description": "Design guidance for charts, graphs, and dashboards.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "debug",
+   "args": "[description]",
+   "description": "Enable debug logging for the current session and troubleshoot issues by reading the session debug log.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "deep-research",
+   "args": "<question>",
+   "description": "Fan out web searches on a question, fetch and cross-check sources, and synthesize a cited report",
+   "kind": "workflow",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "design",
+   "args": "[brief]",
+   "description": "Draft UI mockups, screen flows, landing pages, or posters as artboards on one canvas, published as a Claude Design artifact, for example /design a settings screen for a mobile banking app.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "design",
+   "args": "consent",
+   "description": "Grant Claude access to Claude Design, or withdraw it.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "design-login",
+   "args": "",
+   "description": "Authorize design-system access for /design-sync with your claude.ai account.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "design-sync",
+   "args": "[hint]",
+   "description": "Convert your repo's React design system and upload it to Claude Design, so designs it produces use your real components.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "desktop",
+   "args": "",
+   "description": "Continue the current session in the Claude Code Desktop app.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "diff",
+   "args": "",
+   "description": "Review the changes in your working tree, including the edits Claude has made so far.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "doctor",
+   "args": "[prompt-audit [path]]",
+   "description": "Run a setup checkup that diagnoses installation, settings, extension, and CLAUDE.md problems and proposes fixes that Claude applies after you confirm.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "effort",
+   "args": "[level|auto|status|ultracode [on|off]]",
+   "description": "Set the effort level: low to xhigh, max, or auto; status prints it.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "exit",
+   "args": "",
+   "description": "Exit the CLI.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "export",
+   "args": "[filename]",
+   "description": "Export the current conversation as plain text.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "fast",
+   "args": "[on|off]",
+   "description": "Toggle fast mode on or off.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "feedback",
+   "args": "[report]",
+   "description": "Send product feedback about Claude Code.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "fewer-permission-prompts",
+   "args": "",
+   "description": "Scan your transcripts for common read-only Bash and MCP tool calls, then add a prioritized allowlist to project .claude/settings.json to reduce permission prompts",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "focus",
+   "args": "",
+   "description": "Toggle the focus view, which shows only your last prompt, a one-line tool-call summary with edit diffstats, and the final response.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "fork",
+   "args": "[prompt]",
+   "description": "Copy the current conversation into a new background session and keep working here.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "goal",
+   "args": "[condition|clear]",
+   "description": "Set a goal: Claude keeps working across turns until the condition is met or the goal clears for another reason.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "heapdump",
+   "args": "",
+   "description": "Write a JavaScript heap snapshot and a memory breakdown to ~/Desktop, or your home directory on Linux without a Desktop folder, for diagnosing high memory usage.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "help",
+   "args": "",
+   "description": "Show help and available commands",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "hooks",
+   "args": "",
+   "description": "View hook configurations",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "ide",
+   "args": "",
+   "description": "Manage IDE integrations and show status",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "import",
+   "args": "[codex|gemini|cursor] [--dry-run] [--yes]",
+   "description": "Bring configuration from OpenAI Codex, Google Gemini CLI, or Cursor on your machine into Claude Code, including instruction files, MCP servers, commands, subagents, and skills.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "init",
+   "args": "",
+   "description": "Initialize project with a CLAUDE.md guide.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "insights",
+   "args": "",
+   "description": "Generate an HTML report analyzing your recent sessions on this machine: which projects you work in, how you use Claude Code, where things go wrong, and features to try.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "install-github-app",
+   "args": "",
+   "description": "Install the Claude GitHub App for a repository, with an optional step to set up GitHub Actions workflows and secrets.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "install-slack-app",
+   "args": "",
+   "description": "Install the Claude Slack app.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "keybindings",
+   "args": "",
+   "description": "Open your keyboard shortcuts file",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "list-agents",
+   "args": "",
+   "description": "List the subagents, agent team teammates, and other Claude Code sessions Claude can message, with the name to use for each.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "login",
+   "args": "",
+   "description": "Sign in to your Anthropic account",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "logout",
+   "args": "",
+   "description": "Sign out from your Anthropic account",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "loop",
+   "args": "[interval] [prompt]",
+   "description": "Run a prompt repeatedly while the session stays open.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "mcp",
+   "args": "[reconnect (<server>|all)|enable|disable [<server>|all]]",
+   "description": "Manage MCP server connections and OAuth authentication.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "memory",
+   "args": "",
+   "description": "Edit CLAUDE.md files, enable or disable auto memory, and view auto memory entries",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "mobile",
+   "args": "",
+   "description": "Show QR code to download the Claude mobile app.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": [
+    "ios",
+    "android"
+   ]
+  },
+  {
+   "name": "model",
+   "args": "[model]",
+   "description": "Switch the AI model and save it as your default for new sessions.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "output-style",
+   "args": "[style]",
+   "description": "List output styles or switch to one, for example /output-style concise.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "passes",
+   "args": "",
+   "description": "Share a free week of Claude Code with friends.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "permissions",
+   "args": "",
+   "description": "Manage allow, ask, and deny rules for tool permissions.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "plan",
+   "args": "[description]",
+   "description": "Enter plan mode directly from the prompt.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "plugin",
+   "args": "[subcommand]",
+   "description": "Manage Claude Code plugins.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "plugin-authoring",
+   "args": "",
+   "description": "Load the reference Claude works from to write a mod.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "powerup",
+   "args": "",
+   "description": "Discover Claude Code features through quick interactive lessons with animated demos",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "privacy-settings",
+   "args": "",
+   "description": "View and update your privacy settings.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "radio",
+   "args": "",
+   "description": "Open Claude FM lo-fi radio in your browser.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "rate-limit-options",
+   "args": "",
+   "description": "Show ways to keep working when a claude.ai usage limit blocks a request: wait and continue automatically when the limit resets, add usage credits, or upgrade your plan.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "recap",
+   "args": "",
+   "description": "Generate a one-line summary of the current session on demand.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "release-notes",
+   "args": "",
+   "description": "View the changelog in an interactive version picker.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "reload-plugins",
+   "args": "[--force]",
+   "description": "Reload all active plugins to apply pending changes without restarting.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "reload-skills",
+   "args": "",
+   "description": "Re-scan skill and command directories so skills added or changed on disk during the session become available without restarting.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "remote-control",
+   "args": "",
+   "description": "Make this session available for Remote Control from claude.ai.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "remote-env",
+   "args": "",
+   "description": "Choose the default cloud environment for cloud sessions you start from the CLI",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "rename",
+   "args": "[name]",
+   "description": "Rename the current session and show the name on the prompt bar.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "restart",
+   "args": "",
+   "description": "Restart Claude Code and resume this session, which applies an installed update.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "resume",
+   "args": "[session]",
+   "description": "Resume a conversation by ID or name, or open the session picker.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "review",
+   "args": "[low|medium|high|xhigh|max|ultra] [--fix] [--comment] [--max-findings n|all|default] [pr#|branch|path]",
+   "description": "Alias of /code-review: reviews the current diff, or a PR number, branch, or path you pass, such as /review 1234, and takes the same effort levels and flags.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "rewind",
+   "args": "",
+   "description": "Rewind the conversation and/or code to a previous point, or summarize from a selected message.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": [
+    "checkpoint",
+    "undo"
+   ]
+  },
+  {
+   "name": "run",
+   "args": "",
+   "description": "Launch and drive your project's app to see a change working, not only passing tests.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "run-skill-generator",
+   "args": "",
+   "description": "Teach /run and /verify how to build, launch, and drive your project's app from a clean environment by writing a per-project skill",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "sandbox",
+   "args": "",
+   "description": "Toggle sandbox mode.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "schedule",
+   "args": "[description]",
+   "description": "Create, update, list, or run cloud scheduled tasks, formerly routines.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "scroll-speed",
+   "args": "",
+   "description": "Adjust mouse wheel scroll speed interactively.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "security-review",
+   "args": "",
+   "description": "Analyze the changes on your current branch for security vulnerabilities.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "setup-bedrock",
+   "args": "",
+   "description": "Configure Amazon Bedrock authentication, region, and model pins through an interactive wizard.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "setup-vertex",
+   "args": "",
+   "description": "Configure Google Cloud's Agent Platform authentication, project, region, and model pins through an interactive wizard.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "simplify",
+   "args": "[target]",
+   "description": "Review the changed code for cleanup opportunities and apply the fixes.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "skill-doctor",
+   "args": "",
+   "description": "Show what each of your skills costs in context and how often it gets used, so you can find skills to turn off.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "skills",
+   "args": "",
+   "description": "List available skills.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "slides",
+   "args": "[brief]",
+   "description": "Make a new presentation as a Claude Slides artifact filled from your brief, for example /slides a quarterly review of the platform team.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "stats",
+   "args": "",
+   "description": "Alias for /usage.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "status",
+   "args": "",
+   "description": "Open the Settings interface on the Status tab, showing version, model, account, and connectivity.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "statusline",
+   "args": "",
+   "description": "Configure Claude Code's status line.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "stickers",
+   "args": "",
+   "description": "Check Claude Code sticker availability",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "stop",
+   "args": "",
+   "description": "Stop the background session you're attached to, or the one you send it to as a peek reply; the transcript and any worktree are kept.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "subtask",
+   "args": "<task>",
+   "description": "Spawn a forked subagent: a background subagent that inherits the full conversation and works on the task while you keep working.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "tasks",
+   "args": "",
+   "description": "View and manage background work in the current session, including subagents that have finished.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "team-onboarding",
+   "args": "",
+   "description": "Generate a team onboarding guide from your Claude Code usage history.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "teleport",
+   "args": "",
+   "description": "Pull a cloud session into this terminal.",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  },
+  {
+   "name": "terminal-setup",
+   "args": "",
+   "description": "Install a Shift+Enter keybinding for newlines in VS Code, Cursor, Devin Desktop, Alacritty, or Zed.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "theme",
+   "args": "",
+   "description": "Change the color theme.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "tui",
+   "args": "[default|fullscreen]",
+   "description": "Set the terminal UI renderer and relaunch into it with your conversation intact.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "ultrareview",
+   "args": "[PR or branch]",
+   "description": "Run a deep, multi-agent code review in a cloud sandbox with ultrareview.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "update-config",
+   "args": "[request]",
+   "description": "Describe a settings change, such as allowing a command, setting an environment variable, or adding a hook, and Claude edits the matching settings.json file.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "upgrade",
+   "args": "",
+   "description": "Open the upgrade page in your browser to switch to a higher plan tier.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "usage",
+   "args": "",
+   "description": "Show session cost, plan usage limits, and activity stats.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "usage-credits",
+   "args": "",
+   "description": "Configure usage credits, or request them from your admin, when you hit a limit.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "verify",
+   "args": "",
+   "description": "Confirm a code change does what it should by building your project's app, running it, and observing the result, rather than relying on tests or type checks.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "voice",
+   "args": "[hold|tap|off]",
+   "description": "Toggle voice dictation, or enable it in a specific mode.",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "web-setup",
+   "args": "",
+   "description": "Connect your GitHub account for cloud sessions using your local gh CLI credentials",
+   "kind": "builtin",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "workflow-authoring",
+   "args": "",
+   "description": "Load the reference for writing dynamic workflow scripts: the script API, resume behavior, quality patterns, and worked examples.",
+   "kind": "skill",
+   "interactive": false,
+   "aliases": []
+  },
+  {
+   "name": "workflows",
+   "args": "",
+   "description": "Open the workflow progress view to watch, pause, resume, or save running and completed workflows",
+   "kind": "builtin",
+   "interactive": true,
+   "aliases": []
+  }
+ ]
+}

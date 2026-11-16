@@ -1,0 +1,6 @@
+.superpowers/
+.env
+state/
+result*
+__pycache__/
+.claude/

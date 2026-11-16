@@ -1,0 +1,18 @@
+  Les quatre questions restantes arrivent en cases.
+
+● Aucune de ces options ne figure parmi les points déjà réglés.
+
+────────────────────────────────────────────────────────────────────────────────────────────
+←  ☒ Badge rôle  ☐ Spaces web  ☐ Fermer  ☐ Population  ✔ Submit  →
+
+Le web reçoit les modes de tri de herdr-app (Priority / Grouped by space). Que devient sa section Spaces (onglets, crayon de renommage, « + Nouveau space ») ?
+
+❯ 1. Garder la section (Recommandé)
+     Section Spaces au-dessus, inchangée ; les modes de tri ne touchent que la liste des agents.
+  2. Fondre dans les en-têtes
+     Plus de section Spaces : en mode Grouped, crayon et « + » passent dans les en-têtes de space.
+  3. Type something.
+────────────────────────────────────────────────────────────────────────────────────────────
+  4. Chat about this
+
+Enter to select · Tab/Arrow keys to navigate · Esc to cancel

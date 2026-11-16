@@ -1,0 +1,12 @@
+ ☐ Couleur
+
+Quelle est ta couleur préférée ?
+
+❯ 1. Rouge
+     Rouge
+  2. Vert
+     Vert
+  3. Bleu
+     Bleu
+  4. Type something.
+  5. Chat about this
