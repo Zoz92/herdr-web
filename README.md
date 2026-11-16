@@ -15,6 +15,10 @@ It runs on the machine where the agents run, as a systemd **user** unit, over HT
 single access token. It is meant to be reached from a private network (Tailscale or a LAN), not
 from the Internet.
 
+Use it from a **phone, a tablet or a computer**. On a computer, prefer **[herdr-app](https://herdr.dev)**,
+the native window: it is more complete (spaces, panes, mods). herdr-web is for when you are away from
+your desk.
+
 The page is in English by default; French can be chosen in Settings › Display.
 
 ## Requirements
@@ -53,6 +57,15 @@ Tested with Python 3.14, `cryptography` 50, `hc` 0.1.21, on NixOS.
 Nothing is exposed to the Internet: only devices of your tailnet reach the page.
 
 <br clear="right">
+
+<table>
+<tr>
+<td align="center"><img src="docs/media/phone-chat.png" alt="herdr-web on a phone: an agent's conversation" width="180"><br>An agent and its conversation</td>
+<td align="center"><img src="docs/media/phone-choice.png" alt="herdr-web on a phone: a question with its answer buttons" width="180"><br>A question, answered by a tap</td>
+<td align="center"><img src="docs/media/phone-pairing.png" alt="herdr-web on a phone: the pairing QR code in Settings" width="180"><br>Pairing a new device</td>
+<td align="center"><img src="docs/media/phone-terminal.png" alt="herdr-web on a phone: a live terminal" width="180"><br>A live terminal</td>
+</tr>
+</table>
 
 ## Install
 
@@ -165,6 +178,14 @@ Anyone holding this token can drive your agents: do not paste it in a chat, an i
 
 To log a device out, use the settings panel; to log **every** device out, change the token (see below).
 
+## Voice input (optional)
+
+The microphone button sends a voice note that is turned into text **locally** by
+[Handy](https://github.com/cjpais/Handy), a separate open-source speech-to-text application: herdr-web
+finds it through `~/.config/autostart/Handy.desktop` and runs its command-line transcription (with `ffmpeg`
+to convert the audio). No audio goes to an online service. Without Handy, everything works except the
+microphone. Settings › Voice can import Handy's model, language and vocabulary.
+
 ## Changing the token
 
 Stop the service, note the current settings, remove the env file, run the installer again with
@@ -205,7 +226,7 @@ then delete the cloned repository. Nothing else is installed.
 
 ## Media
 
-`docs/media/agents.gif` and `docs/media/phone.png` are made from synthetic data by
+`docs/media/agents.gif` and the `docs/media/phone*.png` images are made from synthetic data by
 `tools/presentation/make.sh` (headless Chromium and ffmpeg); see `tools/presentation/README.md`.
 
 ## License

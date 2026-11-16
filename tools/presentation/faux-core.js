@@ -49,12 +49,41 @@ const CHAT = {
     { role: "outil", tool: "Bash", text: "Bash: npm publish --access public", ref: "r2", ts: "2026-11-15T10:03:20Z" },
   ],
 };
+// fil d'un agent qui travaille (pas de question en attente)
+const CHAT_T1 = {
+  mode: "chat", items: [
+    { role: "moi", text: "Split the parser into a tokenizer and a grammar module, keep the public API unchanged.", ts: "2026-11-15T09:40:00Z" },
+    { role: "agent", text: "I'll start with the **tokenizer**: it has no dependency on the rest, so it can move first.\n\n- `atlas/lexer.py` gets the token rules\n- `atlas/grammar.py` keeps the parse tree\n- `atlas/__init__.py` re-exports both", ts: "2026-11-15T09:41:00Z" },
+    { role: "outil", tool: "Read", text: "Read: atlas/parser.py", ref: "a1", ts: "2026-11-15T09:41:10Z" },
+    { role: "resultat", ref: "a1", text: "412 lines" },
+    { role: "outil", tool: "Edit", text: "Edit: atlas/lexer.py", ref: "a2", ts: "2026-11-15T09:43:00Z" },
+    { role: "resultat", ref: "a2", text: "created" },
+    { role: "outil", tool: "Bash", text: "Bash: pytest -q tests/test_parser.py", ref: "a3", ts: "2026-11-15T09:50:00Z" },
+    { role: "resultat", ref: "a3", text: "48 passed in 1.2s" },
+    { role: "agent", text: "Tokenizer moved, **48 tests pass**. Next: the grammar module, with a **maker** on a worktree and a **checker** to replay the tests.", ts: "2026-11-15T09:58:00Z" },
+  ],
+};
+// terminal en direct d'un shell : séquences ANSI inventées
+const ECRAN = [
+  "\x1b[1;32muser@my-laptop\x1b[0m:\x1b[1;34m~/src/garden\x1b[0m$ npm run build\r\n",
+  "\r\n> garden@2.4.0 build\r\n> tsc -p . && node scripts/bundle.js\r\n\r\n",
+  "\x1b[32m✔\x1b[0m compiled 38 files\r\n",
+  "\x1b[32m✔\x1b[0m bundled dist/garden.js \x1b[2m(84 kB)\x1b[0m\r\n",
+  "\x1b[33m!\x1b[0m 1 warning: unused export \x1b[36mseed\x1b[0m\r\n\r\n",
+  "\x1b[1;32muser@my-laptop\x1b[0m:\x1b[1;34m~/src/garden\x1b[0m$ npm test\r\n",
+  "\r\n \x1b[32mPASS\x1b[0m  tests/plant.test.ts\r\n \x1b[32mPASS\x1b[0m  tests/soil.test.ts\r\n \x1b[32mPASS\x1b[0m  tests/water.test.ts\r\n\r\n",
+  "Tests: \x1b[1;32m31 passed\x1b[0m, 31 total\r\n\r\n",
+  "\x1b[1;32muser@my-laptop\x1b[0m:\x1b[1;34m~/src/garden\x1b[0m$ \x1b[7m \x1b[0m",
+].join("");
 const CHOIX = { msg: "Bash: npm publish --access public", contexte: "npm publish --access public", choices: [
   { digit: "1", label: "Yes" }, { digit: "2", label: "Yes, and don't ask again" }, { digit: "3", label: "No" }] };
 
 function repondre(route, now) {
   const r = route.request(), u = new URL(r.url());
   const json = (o, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(o) });
+  // seule écriture acceptée : le code d'appairage (lien inventé, le QR s'encode dans la page)
+  if (r.method() === "POST" && u.pathname === "/api/appairage")
+    return json({ lien: "https://100.64.0.10:10370/appairer/4f9c2a71e0b3d85a", expire_s: 300 });
   if (r.method() !== "GET") return json({ erreur: "faux-core" }, 403);
   switch (u.pathname) {
     case "/api/stream": return route.fulfill({ contentType: "text/event-stream", body: ": faux core\n\n" });
@@ -68,9 +97,14 @@ function repondre(route, now) {
     // format réel de herdr_web/statusbar.py ; quota null : aucun script de quota (installation neuve)
     case "/api/statusbar": return json({ cpu: "◔ CPU 18%", mem: "◑ MEM 6,2G", quota: null, models: { opus: 2, sonnet: 3, haiku: 1 } });
     default: {
-      const m = u.pathname.match(/^\/api\/agents\/([^/]+)\/(chat|choices|commands|suggestion)$/);
-      if (m && m[2] === "chat") return json(m[1] === "t5" ? CHAT : { mode: "chat", items: [] });
+      const m = u.pathname.match(/^\/api\/agents\/([^/]+)\/(chat|choices|commands|suggestion|ecran)$/);
+      if (m && m[2] === "chat")
+        return json(m[1] === "t5" ? CHAT : m[1] === "t1" ? CHAT_T1
+          : m[1] === "t6" ? { mode: "brut", note: "", screen: "" } : { mode: "chat", items: [] });
       if (m && m[2] === "choices") return json(m[1] === "t5" ? CHOIX : { choices: [] });
+      if (m && m[2] === "ecran") // flux du terminal : taille, contenu (base64), puis fin
+        return route.fulfill({ contentType: "text/event-stream", body: "retry: 600000\nevent: taille\ndata: {\"cols\":58,\"rows\":24}\n\n"
+          + "data: " + Buffer.from(ECRAN).toString("base64") + "\n\n" });
       if (m && m[2] === "commands") return json([]);
       if (m && m[2] === "suggestion") return json({ suggestion: null, turn: 1 });
       return json({ erreur: "introuvable" }, 404);

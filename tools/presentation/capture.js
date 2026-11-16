@@ -2,7 +2,9 @@
 //   frames <dossier> : images PNG successives de la liste Agents, animations CSS pilotées image par image
 //                      (chaque animation fait un nombre ENTIER de cycles sur la boucle : boucle propre) ;
 //   phone <fichier>  : le haut de la page en largeur téléphone (390 px : en-tête, Spaces, Agents),
-//                      posé dans un cadre de téléphone.
+//                      posé dans un cadre de téléphone ;
+//   shots <dossier>  : d'autres vues téléphone dans le même cadre (phone-chat, phone-choice, phone-pairing,
+//                      phone-terminal .png).
 // Tout reste dans chromium : la page est servie par page.route sur une origine fictive ; toute requête
 // ailleurs est refusée et comptée (« horsBanc », attendu 0).
 // Usage : NODE_PATH=<node_modules avec playwright-core> node capture.js <chromium> frames|phone <sortie>
@@ -57,6 +59,36 @@ function placer({ t, boucle }) {
   }
 }
 
+// cadre de téléphone dessiné en CSS autour de la capture, fond transparent
+async function cadrer(b, ecran, sortie) {
+  const cadre = await b.newPage({ viewport: { width: 470, height: 930 }, deviceScaleFactor: 2 });
+  await cadre.setContent(`<!doctype html><html><body style="margin:0;background:transparent">
+    <div id="tel" style="display:inline-block;margin:20px;padding:14px;border-radius:58px;background:#11111b;
+      box-shadow:0 0 0 2px #45475a,0 18px 40px rgba(0,0,0,.35)">
+      <div style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#11111b">
+        <div style="height:44px;display:flex;align-items:center;padding:0 34px;color:#cdd6f4;font:600 15px system-ui,sans-serif">9:41</div>
+        <img src="data:image/png;base64,${ecran.toString("base64")}" style="width:390px;height:800px;display:block">
+        <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;
+          border-radius:15px;background:#11111b"></div>
+      </div></div></body></html>`);
+  await (await cadre.$("#tel")).screenshot({ path: sortie, omitBackground: true });
+  await cadre.close();
+}
+
+// vues téléphone supplémentaires : chaque scène part de la liste Agents et amène la page à l'état voulu
+const aller = async (p, hash) => { await p.evaluate((h) => { location.hash = h; }, hash); await p.clock.runFor(800); };
+const SCENES = {
+  chat: (p) => aller(p, "#/a/t1"),
+  choice: async (p) => { await aller(p, "#/a/t5"); await p.waitForSelector("#choix:not([hidden])", { timeout: 15000 }); },
+  terminal: async (p) => { await aller(p, "#/a/t6"); await p.waitForSelector(".ecran .xterm", { timeout: 15000 }); await p.clock.runFor(500); },
+  pairing: async (p) => {
+    await p.click(".bouton-reglages"); await p.clock.runFor(1000); await p.waitForTimeout(700);
+    await p.click('.reglages-nav [role=tab]:nth-child(4)'); await p.clock.runFor(1000); await p.waitForTimeout(700);
+    await p.click(".reglages-page:visible .carte-reglages.vedette .action.principal"); await p.clock.runFor(1000); await p.waitForTimeout(700);
+    await p.waitForSelector(".reglages-page:visible .appairage svg", { timeout: 15000 });
+  },
+};
+
 (async () => {
   const b = await chromium.launch({ executablePath: CHROMIUM, args: ["--force-color-profile=srgb"] });
   if (MODE === "frames") {
@@ -75,19 +107,16 @@ function placer({ t, boucle }) {
   } else if (MODE === "phone") {
     const { p } = await ouvrir(b, { viewport: { width: 390, height: 800 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
     await p.evaluate(placer, { t: 300, boucle: BOUCLE_MS });
-    const ecran = await p.screenshot({ animations: "allow" });
-    // cadre de téléphone dessiné en CSS autour de la capture, fond transparent
-    const cadre = await b.newPage({ viewport: { width: 470, height: 930 }, deviceScaleFactor: 2 });
-    await cadre.setContent(`<!doctype html><html><body style="margin:0;background:transparent">
-      <div id="tel" style="display:inline-block;margin:20px;padding:14px;border-radius:58px;background:#11111b;
-        box-shadow:0 0 0 2px #45475a,0 18px 40px rgba(0,0,0,.35)">
-        <div style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#11111b">
-          <div style="height:44px;display:flex;align-items:center;padding:0 34px;color:#cdd6f4;font:600 15px system-ui,sans-serif">9:41</div>
-          <img src="data:image/png;base64,${ecran.toString("base64")}" style="width:390px;height:800px;display:block">
-          <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;
-            border-radius:15px;background:#11111b"></div>
-        </div></div></body></html>`);
-    await (await cadre.$("#tel")).screenshot({ path: SORTIE, omitBackground: true });
+    await cadrer(b, await p.screenshot({ animations: "allow" }), SORTIE);
+  } else if (MODE === "shots") {
+    fs.mkdirSync(SORTIE, { recursive: true });
+    for (const [nom, scene] of Object.entries(SCENES)) {
+      const { ctx, p } = await ouvrir(b, { viewport: { width: 390, height: 800 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+      await scene(p);
+      await p.evaluate(placer, { t: 300, boucle: BOUCLE_MS });
+      await cadrer(b, await p.screenshot({ animations: "allow" }), path.join(SORTIE, `phone-${nom}.png`));
+      await ctx.close();
+    }
   } else {
     throw new Error("mode inconnu : frames | phone");
   }

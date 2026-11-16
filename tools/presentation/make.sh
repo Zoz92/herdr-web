@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fabrique docs/media/agents.gif et docs/media/phone.png depuis la page de ce dépôt et des données
+# Fabrique docs/media/agents.gif, phone.png et phone-{chat,choice,pairing,terminal}.png depuis la page de ce dépôt et des données
 # synthétiques (faux-core.js). Voir README.md à côté.
 set -euo pipefail
 ICI=$(cd "$(dirname "$0")" && pwd)
@@ -19,4 +19,5 @@ ffmpeg -loglevel error -y -framerate 12.5 -i "$TMP/f/f%04d.png" -i "$TMP/palette
   -lavfi "[0:v][1:v]paletteuse=dither=none:diff_mode=rectangle" -loop 0 "$RACINE/docs/media/agents.gif"
 
 node "$ICI/capture.js" "$CHROMIUM" phone "$RACINE/docs/media/phone.png"
+node "$ICI/capture.js" "$CHROMIUM" shots "$RACINE/docs/media"
 ls -l "$RACINE/docs/media"

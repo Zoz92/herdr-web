@@ -15,6 +15,10 @@ Il tourne sur la machine des agents, en unit systemd **utilisateur**, en HTTPS, 
 d'accès unique. Il est fait pour être joint depuis un réseau privé (Tailscale ou réseau local), pas
 depuis Internet.
 
+On s'en sert sur **téléphone, tablette ou ordinateur**. Sur ordinateur, préférez **[herdr-app](https://herdr.dev)**,
+la fenêtre native : elle est plus complète (spaces, panes, mods). herdr-web sert surtout quand on est
+loin de son poste.
+
 La page est en anglais par défaut ; le français se choisit dans Réglages › Affichage.
 
 ## Prérequis
@@ -53,6 +57,15 @@ Testé avec Python 3.14, `cryptography` 50, `hc` 0.1.21, sous NixOS.
 Rien n'est exposé à Internet : seuls les appareils de votre tailnet joignent la page.
 
 <br clear="right">
+
+<table>
+<tr>
+<td align="center"><img src="docs/media/phone-chat.png" alt="herdr-web sur un téléphone : la conversation d'un agent" width="180"><br>Un agent et sa conversation</td>
+<td align="center"><img src="docs/media/phone-choice.png" alt="herdr-web sur un téléphone : une question et ses boutons de réponse" width="180"><br>Une question, une réponse d'un toucher</td>
+<td align="center"><img src="docs/media/phone-pairing.png" alt="herdr-web sur un téléphone : le QR code d'appairage dans les Réglages" width="180"><br>Appairer un nouvel appareil</td>
+<td align="center"><img src="docs/media/phone-terminal.png" alt="herdr-web sur un téléphone : un terminal en direct" width="180"><br>Un terminal en direct</td>
+</tr>
+</table>
 
 ## Installation
 
@@ -171,6 +184,14 @@ dans un journal.
 Pour déconnecter un appareil : bouton « Déconnexion » des réglages ; pour déconnecter **tous** les
 appareils : changer le jeton (ci-dessous).
 
+## Saisie vocale (facultatif)
+
+Le bouton micro envoie un message vocal que [Handy](https://github.com/cjpais/Handy), une application
+libre de transcription séparée, transforme en texte **en local** : herdr-web la trouve par
+`~/.config/autostart/Handy.desktop` et lance sa transcription en ligne de commande (avec `ffmpeg` pour
+convertir l'audio). Aucun son ne part vers un service en ligne. Sans Handy, tout fonctionne sauf le
+micro. Réglages › Voix peut importer le modèle, la langue et le vocabulaire de Handy.
+
 ## Changer le jeton
 
 Arrêter le service, noter les réglages actuels, retirer le fichier env, relancer l'installeur avec
@@ -212,7 +233,7 @@ puis supprimer le dépôt cloné. Rien d'autre n'est installé.
 
 ## Images
 
-`docs/media/agents.gif` et `docs/media/phone.png` sont fabriqués à partir de données
+`docs/media/agents.gif` et les images `docs/media/phone*.png` sont fabriqués à partir de données
 synthétiques par `tools/presentation/make.sh` (Chromium sans tête et ffmpeg) ; voir
 `tools/presentation/README.md`.
 
