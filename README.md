@@ -38,6 +38,18 @@ below (a Python virtualenv).
 
 Tested with Python 3.14, `cryptography` 50, `hc` 0.1.21, on NixOS.
 
+## Let your coding agent install it
+
+Give this to Claude Code, Codex, opencode or any coding agent, from a clone of this repository:
+
+> Read `AGENTS.md`, then install herdr-web on this machine: run the dry run first and show it to me,
+> bind it to my Tailscale address, never print the access token, and ask me before opening anything
+> beyond my private network.
+
+[`AGENTS.md`](AGENTS.md) is the step-by-step version for agents (prerequisite checks, installer,
+post-install checks, safety rules) and also explains how to contribute (layout, tests, the rules the
+test suite enforces). Claude Code reads it through the one-line `CLAUDE.md` that imports it.
+
 ## Use it from your phone over Tailscale
 
 <img src="docs/media/phone.png" alt="herdr-web on a phone: the Agents list" width="240" align="right">

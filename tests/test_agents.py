@@ -802,6 +802,50 @@ def test_reglages_du_projet_priment_sur_ceux_de_l_utilisateur(tmp_path):
     assert compact_window(home, str(proj)) == 1_000_000           # compaction coupée par le projet
 
 
+def test_seuil_par_modele_prime_sur_la_cle_globale(tmp_path):
+    """/autocompact écrit modelSettings.<modèle>.autoCompactWindow ; la clé globale reste à côté."""
+    import json
+    from herdr_web.agents import compact_window
+    _catalogue(tmp_path, **{"claude-opus-5-5": 1_000_000, "claude-haiku-4-5-20251001": 200_000})
+    s = tmp_path / ".claude" / "settings.json"
+    s.write_text(json.dumps({"autoCompactWindow": 500000,
+                             "modelSettings": {"claude-opus-5-5": {"effortLevel": "high", "autoCompactWindow": 700000}}}))
+    assert compact_window(tmp_path, None, "claude-opus-5-5") == 700_000            # modèle présent
+    assert compact_window(tmp_path, None, "claude-opus-5-5[1m]") == 700_000        # spelling [1m]
+    assert compact_window(tmp_path, None, "claude-haiku-4-5-20251001") == 200_000  # autre modèle : global, borné
+    assert compact_window(tmp_path, None, "claude-sonnet-5-5") == 500_000          # autre modèle : global
+    assert compact_window(tmp_path) == 500_000                                     # modèle inconnu : global
+    s.write_text(json.dumps({"modelSettings": {"claude-opus-5-5": {"effortLevel": "high"}}}))
+    assert compact_window(tmp_path, None, "claude-opus-5-5") == 1_000_000          # pas d'autoCompactWindow
+    s.write_text(json.dumps({"autoCompactWindow": 500000,
+                             "modelSettings": {"claude-opus-5-5": {"autoCompactWindow": "auto"}}}))
+    assert compact_window(tmp_path, None, "claude-opus-5-5") == 1_000_000          # "auto" : fenêtre du modèle
+    s.write_text(json.dumps({"autoCompactWindow": 500000, "autoCompactEnabled": False,
+                             "modelSettings": {"claude-opus-5-5": {"autoCompactWindow": 700000}}}))
+    assert compact_window(tmp_path, None, "claude-opus-5-5") == 1_000_000          # désactivée
+    s.write_text(json.dumps({"modelSettings": {"claude-opus-5-5": {"autoCompactWindow": 2_000_000}}}))
+    _catalogue(tmp_path, **{"claude-opus-5-5": 1_000_000})
+    assert compact_window(tmp_path, None, "claude-opus-5-5") == 1_000_000          # borné par la fenêtre
+    s.write_text(json.dumps({"modelSettings": "pas un dict"}))
+    assert compact_window(tmp_path, None, "claude-opus-5-5") == 1_000_000          # illisible : rien d'inventé
+
+
+def test_couche_projet_prime_meme_sur_la_cle_par_modele_utilisateur(tmp_path):
+    import json
+    from herdr_web.agents import compact_window
+    home, proj = tmp_path / "home", tmp_path / "proj"
+    (home / ".claude").mkdir(parents=True)
+    (proj / ".claude").mkdir(parents=True)
+    (home / ".claude" / "settings.json").write_text(json.dumps(
+        {"modelSettings": {"claude-opus-5-5": {"autoCompactWindow": 700000}}}))
+    assert compact_window(home, str(proj), "claude-opus-5-5") == 700_000
+    (proj / ".claude" / "settings.json").write_text(json.dumps({"autoCompactWindow": 300000}))
+    assert compact_window(home, str(proj), "claude-opus-5-5") == 300_000           # projet global avant user par modèle
+    (proj / ".claude" / "settings.local.json").write_text(json.dumps(
+        {"modelSettings": {"claude-opus-5-5": {"autoCompactWindow": 250000}}}))
+    assert compact_window(home, str(proj), "claude-opus-5-5") == 250_000
+
+
 def test_chaque_agent_a_la_fenetre_de_son_modele(tmp_path):
     import json
     _catalogue(tmp_path, **{"claude-opus-5-5": 1_000_000, "claude-haiku-4-5-20251001": 200_000})

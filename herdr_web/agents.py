@@ -299,12 +299,40 @@ def _reglages(chemin: Path) -> dict:
         return {}
 
 
+def _canon(model) -> str:
+    """Nom canonique d'un modèle : sans suffixe [1m] ni date (claude-opus-5-5[1m] -> claude-opus-5-5),
+    comme Claude Code apparie les clés de `modelSettings`."""
+    return re.sub(r"-\d{8}$", "", str(model).split("[")[0])
+
+
+def _fenetre_couche(couche: dict, model) -> tuple[bool, object]:
+    """(définie, valeur) de autoCompactWindow dans UNE couche : la clé du modèle (identifiant exact
+    d'abord, sinon un spelling équivalent) l'emporte sur la clé globale de la même couche."""
+    ms = couche.get("modelSettings")
+    if isinstance(ms, dict) and isinstance(model, str) and model:
+        trouve = None
+        for k, v in ms.items():
+            if not isinstance(v, dict) or "autoCompactWindow" not in v or _canon(k) != _canon(model):
+                continue
+            if k == model.split("[")[0]:
+                trouve = v
+                break
+            trouve = trouve or v
+        if trouve is not None:
+            return True, trouve["autoCompactWindow"]
+    if "autoCompactWindow" in couche:
+        return True, couche["autoCompactWindow"]
+    return False, None
+
+
 def compact_window(home: Path = Path.home(), cwd: str | None = None, model: str | None = None) -> int:
     """Seuil où Claude Code compacte, celui que la jauge regarde : min(autoCompactWindow effectif,
-    fenêtre du modèle). autoCompactWindow : le premier des réglages du projet (settings.local.json,
-    puis settings.json, du dossier de l'agent et de ses parents) puis de ~/.claude/settings.json qui
-    le définit ; la compaction coupée (autoCompactEnabled false) le laisse de côté. Sans réglage, ou
-    sans modèle connu, c'est la fenêtre du modèle (FENETRE à défaut)."""
+    fenêtre du modèle). autoCompactWindow : la première couche de réglages qui le définit — projet
+    (settings.local.json, puis settings.json, du dossier de l'agent et de ses parents), puis
+    ~/.claude/settings.json — et, dans une couche, `modelSettings[<modèle>].autoCompactWindow` passe
+    avant la clé globale (comme /autocompact, qui écrit là) ; "auto" laisse la fenêtre du modèle.
+    La compaction coupée (autoCompactEnabled false, global : aucune clé par modèle) le laisse de côté.
+    Sans réglage, ou sans modèle connu, c'est la fenêtre du modèle (FENETRE à défaut)."""
     couches = []
     if cwd:
         for d in [Path(cwd), *Path(cwd).parents]:
@@ -312,7 +340,7 @@ def compact_window(home: Path = Path.home(), cwd: str | None = None, model: str 
                 couches += [_reglages(d / ".claude" / "settings.local.json"), _reglages(d / ".claude" / "settings.json")]
     couches.append(_reglages(home / ".claude" / "settings.json"))
     actif = next((c["autoCompactEnabled"] for c in couches if "autoCompactEnabled" in c), True)
-    w = next((c["autoCompactWindow"] for c in couches if "autoCompactWindow" in c), None)
+    w = next((v for ok, v in map(lambda c: _fenetre_couche(c, model), couches) if ok), None)
     plafond = fenetre_modele(model, home)
     if actif is not False and isinstance(w, int) and not isinstance(w, bool) and w > 0:
         return min(w, plafond)
