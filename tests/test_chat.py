@@ -96,6 +96,19 @@ def test_image_citee_suit_le_home_du_service(tmp_path, monkeypatch):
     assert items[1].image is None  # hors du HOME du service : /api/image le refuserait
 
 
+
+def test_plusieurs_photos_toutes_detectees(tmp_path, monkeypatch):
+    # plusieurs photos envoyées du téléphone : UN message les cite toutes ; seule la 1re
+    # apparaissait dans le fil (constaté le 2026-11-17)
+    monkeypatch.setenv("HOME", "/home/autre")
+    base = "/home/autre/.local/state/herdr-core/default/files/t1/"
+    p = tmp_path / "s.jsonl"
+    p.write_text(_user(f"vois [image : {base}a.png] [image : {base}b.jpg] [image : /ailleurs/c.png] [image : {base}d.webp]"))
+    it = ChatReader(p).tail()[0]
+    assert it.images == [base + "a.png", base + "b.jpg", base + "d.webp"]
+    assert it.image == base + "a.png"  # page encore en cache (ancien service worker) : la 1re reste
+
+
 # --- correction round 1 ---
 import pytest
 

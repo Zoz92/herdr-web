@@ -596,11 +596,14 @@ class AgentBoard:
             ctx = self._info(path)[2]
             title = (r or {}).get("title") or ""
             role = role_inferred(title)
+            # hc range aussi dans `records` les commandes Bash lancées en fond (id « b… », mesuré
+            # le 2026-11-21) : session connue mais pas de journal de sous-agent, rien à ouvrir
+            shell = session is not None and path is None
             out.append({"id": str(k), "title": title,
                         "state": (r or {}).get("state") or "unknown",
                         "model": self._last_model(path),
                         "context": ctx, "context_max": self._seuil(path, cwd) if ctx is not None else None,
-                        "role": role, "role_infere": role is not None})
+                        "role": "shell" if shell else role, "role_infere": role is not None and not shell})
         return out
 
     def _refresh(self):

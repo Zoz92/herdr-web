@@ -1,0 +1,14 @@
+● Le sleep 25 seul était bloqué par le harnais. J'ai lancé le même délai via un Monitor (boucle jusqu'à 25 s). J'attends sa notification « fini ».
+
+✻ Baked for 6s · done 18:44
+Background update waiting while this panel is open
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   /btw combien font 3+3 ? réponds en un mot
+   /btw quelle heure est-il approximativement ? un mot
+   /btw donne 3 idées de prénoms, en liste numérotée
+
+     1. Léa
+     2. Hugo
+     3. Jade
+
+   ⇧←/→ to browse · c to copy · f to fork · x to clear history · Esc to close

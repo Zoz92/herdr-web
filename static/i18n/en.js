@@ -174,6 +174,8 @@
   "choix.taReponse": "Your answer…",
   "choix.libre": "Free answer",
   "choix.repondre": "Reply",
+  "choix.panneau": "/btw panel open in the terminal",
+  "choix.fermerPanneau": "Close the panel (Esc)",
   "cmd.terminal": "opens in the terminal",
   "cmd.terminalNote": "/{nom} opens in the terminal: its picker does not appear in the thread",
   "envoi.attente": "sending…",

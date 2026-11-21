@@ -1280,6 +1280,16 @@ def test_choices_porte_le_contexte_de_la_question(srv):
     assert d["contexte"] == "←  ☒ A  ☐ B  ✔ Submit  →\nQuelle taille ?"
 
 
+
+def test_choices_panneau_btw_sans_faux_choix(srv):
+    """Panneau /btw ouvert (agent `blocked`, « dialog open ») : la liste numérotée de la réponse
+    n'est pas un choix ; la page propose de le fermer (2026-11-17)."""
+    srv.hc_fake.screen = "   /btw q\n     1. Léa\n     2. Hugo\n\n   c to copy · f to fork · Esc to close\n"
+    r, b = req(srv, "GET", "/api/agents/t1/choices")
+    d = json.loads(b)
+    assert r.status == 200 and d["panneau"] is True
+    assert d["choices"] == [] and d["menu"] is None and d["contexte"] == ""
+
 _Q2 = "←  ☒ A  ☐ B  ✔ Submit  →\n\nQuelle taille ?\n\n❯ 1. Petit\n  2. Grand\n"
 
 

@@ -162,3 +162,24 @@ def test_contexte_question_simple_et_permission():
     assert parse_contexte(screen("ecran_permission.txt")).splitlines() == [
         "Bash command", "touch fichier-oui.txt", "Crée le fichier fichier-oui.txt", "Do you want to proceed?"]
     assert parse_contexte("rien\n") == ""
+
+
+# --- panneau /btw (2026-11-17) : un événement de fond pendant qu'il est ouvert passe l'agent en
+# `blocked` (« dialog open ») ; la liste numérotée de la réponse se lisait comme des choix
+def test_panneau_btw_reconnu():
+    from herdr_web.choices import panneau_btw
+    assert panneau_btw(screen("ecran_btw.txt"))
+    assert panneau_btw("x\n   /btw q\n     Six\n\n   c to copy · f to fork · Esc to close\n\n")
+    assert panneau_btw("   /btw q\n     ✻ Answering…\n\n   Esc to close\n")
+
+
+@pytest.mark.parametrize("nom", ["ecran_permission.txt", "ecran_question.txt", "ecran_askuser_multi.txt",
+                                 "ecran_apercu_q1.txt"])
+def test_panneau_btw_pas_un_dialogue(nom):
+    from herdr_web.choices import panneau_btw
+    assert not panneau_btw(screen(nom))
+
+
+def test_panneau_btw_esc_to_close_ailleurs_que_au_pied():
+    from herdr_web.choices import panneau_btw
+    assert not panneau_btw("● il a écrit « Esc to close »\n❯ \n")

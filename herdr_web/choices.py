@@ -57,6 +57,19 @@ def curseur(screen: str) -> str | None:
     return None
 
 
+# Panneau de /btw (question à côté), mesuré le 2026-11-17 sur Claude Code 2.1.326 : son pied, en
+# dernière ligne, finit par « Esc to close » (« Esc to close » seul pendant la réponse, puis
+# « c to copy · f to fork · Esc to close »). Un événement de fond pendant qu'il est ouvert passe
+# l'agent en `blocked` (« dialog open ») ; la liste numérotée d'une réponse se lisait alors comme
+# des choix, et Échap, seule sortie, était refusée.
+_PIED_BTW = re.compile(r"(?:^|·)\s*Esc to close$")
+
+
+def panneau_btw(screen: str) -> bool:
+    lignes = [l.strip() for l in screen.splitlines() if l.strip()]
+    return bool(lignes) and bool(_PIED_BTW.search(lignes[-1]))
+
+
 def parse_choices(screen: str) -> list[Choice]:
     """Le dernier bloc de lignes numérotées 1, 2, 3… de l'écran.
 

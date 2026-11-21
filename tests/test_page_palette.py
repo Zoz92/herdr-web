@@ -89,7 +89,7 @@ def test_bouton_en_tete_et_rien_de_nul(p):
 # ---------- témoins : chaque garde retirée fait rougir le scénario ----------
 @pytest.mark.parametrize("avant,apres,cle,attendu_faux", [
     # refus en blocked côté page
-    ('if (a && a.state === "blocked") { statut(t("erreur.attendChoixCarte"), true); chargerChoix(); return; }',
+    ('if (a && a.state === "blocked" && !panneau) { statut(t("erreur.attendChoixCarte"), true); chargerChoix(); return; }',
      "", "bloqueCtrlL", lambda v: v["keys"] == []),
     # entrée inactive exécutée quand même
     ("if (e.inactif) { p.note.textContent = e.detail; return; }", "", "bloquePalette", lambda v: v["keys"] == []),

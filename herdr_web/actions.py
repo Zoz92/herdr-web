@@ -9,6 +9,7 @@ import threading
 from contextlib import contextmanager
 from pathlib import Path
 
+from herdr_web.choices import panneau_btw
 from herdr_web.core import HcError
 
 log = logging.getLogger(__name__)
@@ -101,9 +102,14 @@ def send_key(hc, address: str, key) -> None:
         raise ValueError(f"touche hors liste : {key!r}")
     with _en_vol(address):
         status = hc.request("terminal.get", {"terminal": address}).get("status") or {}
-        if status.get("state") == "blocked":
+        if status.get("state") == "blocked" and not (key == "esc" and _ecran_btw(hc, address)):
             raise AgentBlocked(address)
         hc.request("terminal.keys", {"terminal": address, "keys": [key]})
+
+
+def _ecran_btw(hc, address: str) -> bool:
+    """Panneau /btw : un « dialogue » que seul Échap ferme, sans réponse à donner à la place de personne."""
+    return panneau_btw(hc.request("terminal.read", {"terminal": address, "lines": 0}).get("text") or "")
 
 
 def put_photo(hc, address: str, name: str, data: bytes) -> str:

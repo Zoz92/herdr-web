@@ -121,3 +121,30 @@ def test_send_key_occupe_puis_libere_meme_en_erreur():
     finally:
         with actions._lock:
             actions._inflight.discard("t9")
+
+
+# ---------- panneau /btw (2026-11-17) : seul Échap le ferme, même `blocked` ----------
+_BTW = "   /btw q\n     1. Léa\n     2. Hugo\n\n   c to copy · f to fork · Esc to close\n"
+
+
+def test_keys_esc_ferme_le_panneau_btw_meme_bloque(srv):  # noqa: F811
+    srv.hc_fake.status = {"state": "blocked", "msg": "dialog open"}
+    srv.hc_fake.screen = _BTW
+    r, b = req(srv, "POST", "/api/agents/t1/keys", {"key": "esc"})
+    assert r.status == 200, b
+    assert appuis(srv) == [("terminal.keys", {"terminal": "t1", "keys": ["esc"]})]
+
+
+@pytest.mark.parametrize("touche", ["enter", "up", "down", "ctrl+c", "ctrl+l"])
+def test_keys_autre_touche_au_panneau_btw_refusee(srv, touche):  # noqa: F811
+    srv.hc_fake.status = {"state": "blocked", "msg": "dialog open"}
+    srv.hc_fake.screen = _BTW
+    r, _ = req(srv, "POST", "/api/agents/t1/keys", {"key": touche})
+    assert r.status == 409 and appuis(srv) == []
+
+
+def test_keys_esc_a_un_vrai_dialogue_refusee(srv):  # noqa: F811
+    srv.hc_fake.status = {"state": "blocked", "msg": "Allow Bash?"}
+    srv.hc_fake.screen = "Allow Bash?\n❯ 1. Yes\n  2. No\n\nEsc to cancel\n"
+    r, _ = req(srv, "POST", "/api/agents/t1/keys", {"key": "esc"})
+    assert r.status == 409 and appuis(srv) == []

@@ -1,5 +1,5 @@
 // Service worker : coquille en cache (réseau d'abord), notifications Web Push.
-const CACHE = "herdr-coquille-v39";
+const CACHE = "herdr-coquille-v42";
 const COQUILLE = ["/", "/static/style.css", "/static/i18n/en.js", "/static/i18n/fr.js", "/static/i18n/i18n.js", "/static/md.js", "/static/commandes.js", "/static/palette.js", "/static/app.js",
                   "/static/vendor/qrcode/qrcode.js",
                   "/static/herdr.svg", "/static/os-logo.png", "/static/prog-claude.svg", "/static/prog-terminal.svg",

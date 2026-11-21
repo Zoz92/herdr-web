@@ -141,7 +141,7 @@ def test_handy_info_sans_desktop_ni_config_le_dit(tmp_path):
 
 
 def test_cache_du_sw_lu_dans_le_vrai_fichier():
-    assert cache_sw(test_server.__file__.rsplit("/tests/", 1)[0] + "/static") == "herdr-coquille-v39"
+    assert cache_sw(test_server.__file__.rsplit("/tests/", 1)[0] + "/static") == "herdr-coquille-v42"
 
 
 def test_commit_servi_est_un_sha():

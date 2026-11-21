@@ -174,6 +174,8 @@
   "choix.taReponse": "Ta réponse…",
   "choix.libre": "Réponse libre",
   "choix.repondre": "Répondre",
+  "choix.panneau": "Panneau /btw ouvert dans le terminal",
+  "choix.fermerPanneau": "Fermer le panneau (Échap)",
   "cmd.terminal": "s'ouvre dans le terminal",
   "cmd.terminalNote": "/{nom} s'ouvre dans le terminal : son sélecteur n'apparaît pas dans le fil",
   "envoi.attente": "envoi en attente…",

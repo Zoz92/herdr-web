@@ -9,7 +9,7 @@ import os
 import re
 import threading
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 log = logging.getLogger(__name__)
@@ -110,6 +110,7 @@ class ChatItem:
     collee: str | None = None  # empreinte d'une image collée dans Claude Code (/api/collee/<empreinte>)
     de: str | None = None  # hc : adresse du terminal émetteur (None : herdr lui-même)
     nom: str | None = None  # hc : nom de l'agent émetteur, s'il est donné
+    images: list[str] = field(default_factory=list)  # toutes les photos citées ; `image` = la 1re (pages en cache)
 
 
 def resolve_session(pid: int, home: Path = Path.home()) -> Path | None:
@@ -202,8 +203,9 @@ def _hc(text: str, ts: str) -> ChatItem | None:
 
 
 def _moi(text: str, ts: str) -> ChatItem:
-    img = _image_re(str(image_root())).search(text)
-    return ChatItem("moi", text, None, img.group(0) if img else None, ts)
+    # plusieurs photos partent en UN message (envoyerPhotos) : toutes, pas seulement la 1re (2026-11-17)
+    imgs = _image_re(str(image_root())).findall(text)
+    return ChatItem("moi", text, None, imgs[0] if imgs else None, ts, images=imgs)
 
 
 def _balise(text: str, nom: str) -> str | None:

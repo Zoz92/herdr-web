@@ -167,8 +167,14 @@ function iconeRole(a, fam) {
 
 function iconeSous(s) { // rôle déduit du titre ; sans rôle, la règle « Claude sans rôle » (point 8)
   if (!s) return null;
-  return iconeRole({ role: ["maker", "checker", "reviewer"].includes(s.role) ? s.role : "claude", state: s.state });
+  return iconeRole({ role: ["maker", "checker", "reviewer", "shell"].includes(s.role) ? s.role : "claude", state: s.state });
 }
+
+// lien vers le fil d'un sous-agent ; une tâche Bash de fond (rôle « shell » : hc la range parmi les
+// records, mesuré le 2026-11-21) n'a pas de fil, la ligne est montrée sans lien
+const lienSous = (a, s, classe, ...enfants) => (s.role === "shell"
+  ? el("span", { class: classe + " shell" }, ...enfants)
+  : el("a", { class: classe, href: hashAgent(a.address, s.id) }, ...enfants));
 
 function iconeAgentConnu(id, nom) { // menu « + » : l'étoile de Claude, sinon une pastille à l'initiale
   if (id === "claude") return svg("0 0 24 24", "ico-agent", ["path", { d: ETOILE, fill: "#D97757" }]);
@@ -607,8 +613,7 @@ function ligneAgent(a, fam, o = {}) {
   // sous-agents : seulement ceux qui tournent, comme le mod agents de herdr-app
   const subs = sousActifs(a);
   subs.forEach((s, i) => {
-    bloc.append(el("a", { class: "sous-agent" + (actif && v.sous === s.id ? " actif" : ""),
-      href: hashAgent(a.address, s.id) },
+    bloc.append(lienSous(a, s, "sous-agent" + (actif && v.sous === s.id ? " actif" : ""),
       el("span", { class: "arbre" }, i === subs.length - 1 && !fam.enfantsDe(a).length ? "└" : "├"),
       statutAgent(s.state, o.compact), iconeSous(s),
       el("span", { class: "nom" }, texte(s.title) || t("sousAgent", { id: texte(s.id) })), badgeModele(s.model),
@@ -1133,7 +1138,7 @@ function majVueAgent() {
     texte(a.machine) ? el("span", { class: "machine" }, logoOs(a), a.machine) : null);
   // sous-agents actifs : pastilles cliquables vers leur fil (lecture seule)
   const actifs = (Array.isArray(a.subagents) ? a.subagents : []).filter((s) => !["done", "idle"].includes(s.state));
-  remplacer(v.subs, ...actifs.map((s) => el("a", { class: "pastille-sous", href: hashAgent(a.address, s.id) },
+  remplacer(v.subs, ...actifs.map((s) => lienSous(a, s, "pastille-sous",
     rond(s.state), iconeSous(s), el("span", {}, texte(s.title) || t("sousAgent", { id: texte(s.id) })), badgeModele(s.model))));
   v.subs.hidden = !actifs.length;
   if (a.state === "blocked") chargerChoix();
@@ -1327,8 +1332,10 @@ function cleItem(it) {
 function bulle(it) {
   if (it.role === "moi") {
     const b = el("div", { class: "bulle moi" });
-    if (typeof it.image === "string" && it.image.startsWith("/") && !it.image.startsWith("//")) { // chemin absolu, jamais une URL
-      const src = "/api/image?p=" + encodeURIComponent(it.image);
+    // toutes les photos du message (seule la 1re l'était, 2026-11-17) ; un ancien serveur n'envoie que `image`
+    for (const p of Array.isArray(it.images) ? it.images : [it.image]) {
+      if (typeof p !== "string" || !p.startsWith("/") || p.startsWith("//")) continue; // chemin absolu, jamais une URL
+      const src = "/api/image?p=" + encodeURIComponent(p);
       b.append(el("a", { href: src, target: "_blank", rel: "noopener noreferrer" }, el("img", { src, alt: t("fil.imageEnvoyee") })));
     }
     if (typeof it.collee === "string" && /^[0-9a-f]{64}$/.test(it.collee)) { // collée dans Claude Code
@@ -1701,6 +1708,13 @@ async function chargerChoix() {
       v.suite = null;
       if (rien) { v.carte.hidden = true; v.carte.replaceChildren(); return; }
     }
+    v.panneau = !!d.panneau;
+    if (v.panneau) { // panneau /btw : rien à choisir, seul Échap le ferme (2026-11-17)
+      v.carte.replaceChildren(el("div", { class: "question" }, t("choix.panneau")),
+        el("button", { type: "button", onclick: () => fermerPanneau(v) }, t("choix.fermerPanneau")));
+      v.carte.hidden = false;
+      return;
+    }
     v.msgCarte = d.msg;
     v.sigCarte = sig;
     v.vueCarte = { contexte: texte(d.contexte), libelles: (d.choices || []).map((c) => texte(c.label)) };
@@ -1746,6 +1760,11 @@ async function chargerChoix() {
     if (v.libre && v.libre.sig === sig) ouvrirSaisieLibre(v, v.libre.digit, sig);
     else v.libre = null;
   } catch (e) { if (e.status !== 401 && !sortieAgent(e)) statut(messageErreur(e), true); }
+}
+
+function fermerPanneau(v) {
+  v.carte.hidden = true;
+  envoyerTouche(v.addr, "esc", t("touche.esc"), true);
 }
 
 // choix unique : « Type something. » ; question à cases : « [ ] Type something » (sans point)
@@ -3053,10 +3072,11 @@ async function executerPalette(e) {
   }
 }
 
-// Une touche nommée au terminal (liste blanche du serveur) ; refusée ici quand l'agent attend un choix.
-async function envoyerTouche(addr, key, nom) {
+// Une touche nommée au terminal (liste blanche du serveur) ; refusée ici quand l'agent attend un choix,
+// sauf Échap au panneau /btw (panneau : le serveur relit l'écran et refuse tout autre dialogue).
+async function envoyerTouche(addr, key, nom, panneau = false) {
   const a = trouver(addr);
-  if (a && a.state === "blocked") { statut(t("erreur.attendChoixCarte"), true); chargerChoix(); return; }
+  if (a && a.state === "blocked" && !panneau) { statut(t("erreur.attendChoixCarte"), true); chargerChoix(); return; }
   try {
     await api("POST", urlAgent(addr, "keys"), { key });
     const fait = t("touche.envoyee", { nom });
@@ -3086,6 +3106,11 @@ document.addEventListener("keydown", (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
     ouvrirPalette(); // ouverte : la referme
+  } else if (ev.key === "Escape" && S.vue && S.vue.panneau && !S.vue.carte.hidden
+    && !(S.palette || S.confirmation || S.reglages)) { // Échap du PC ferme le panneau /btw
+    ev.preventDefault();
+    ev.stopPropagation();
+    fermerPanneau(S.vue);
   } else if (r === "nettoyer" && PALETTE.ctrlLPermis({ vue: !!S.vue, sous: !!(S.vue && S.vue.sous),
     modal: !!(S.palette || S.confirmation || S.reglages), focus: focusPourCtrlL(),
     champRempli: !!(S.vue && S.vue.champ && S.vue.champ.value.trim()) })) {

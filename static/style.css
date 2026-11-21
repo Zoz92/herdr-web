@@ -172,7 +172,7 @@ a { color: var(--blue); }
 .groupe-tete.done { color: var(--green); }
 .groupe-tete.error { color: var(--red); }
 .agent { display: block; padding: .45rem .55rem; border-radius: 8px; color: inherit; text-decoration: none; }
-.agent:hover, .sous-agent:hover { background: rgba(49, 50, 68, .6); }
+.agent:hover, .sous-agent:not(.shell):hover { background: rgba(49, 50, 68, .6); }
 .agent.actif, .sous-agent.actif { background: var(--surface0); box-shadow: inset 3px 0 0 var(--mauve); }
 .agent .l1 { display: flex; align-items: center; gap: .5rem; }
 .agent .nom { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -245,7 +245,7 @@ a { color: var(--blue); }
 .pastille-sous { display: inline-flex; align-items: center; gap: .35rem; padding: .1rem .55rem; border-radius: 99px;
   background: var(--surface0); color: var(--subtext1); text-decoration: none; font-size: .74rem; max-width: 100%; }
 .pastille-sous > span:not(.rond):not(.modele) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pastille-sous:hover { background: var(--surface1); }
+.pastille-sous:not(.shell):hover { background: var(--surface1); }
 .entete .titres { flex: 1; min-width: 0; }
 .entete .nom { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .entete .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem;

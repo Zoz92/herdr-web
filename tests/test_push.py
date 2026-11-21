@@ -289,3 +289,17 @@ def test_fil_garde_l_ordre_attente_puis_effacement(mk):
     w.submit(agent(addr="t1"))
     assert w.join(timeout=3) and ordre == [("notify", "t1"), ("clear", "t1"), ("notify", "t1")]
     w.stop()
+
+
+def test_chaque_envoi_est_journalise_sans_abonnement(mk, caplog):
+    # notification restée sur le téléphone (2026-11-17) : sans trace, impossible de savoir si le
+    # « clear » était parti ; la ligne dit quoi, pour qui, combien, jamais l'abonnement
+    p, _ = mk()
+    p.subscribe(sub(1))
+    p.subscribe(sub(2))
+    with caplog.at_level("INFO", logger="herdr_web.push"):
+        p.notify(agent(addr="t1"))
+        p.clear("t1")
+    lignes = [r.getMessage() for r in caplog.records if r.name == "herdr_web.push"]
+    assert lignes == ["push attente t1 : 2/2", "push clear t1 : 2/2"]
+    assert not any("push.test" in l for l in lignes)

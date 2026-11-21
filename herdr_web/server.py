@@ -888,6 +888,9 @@ class Handler(BaseHTTPRequestHandler):
     def _choices(self, addr):
         a = self.server.agent(addr)
         ecran = self._screen(addr, 0)
+        if choices_mod.panneau_btw(ecran):  # sa réponse numérotée n'est pas un choix : la page propose Échap
+            return self._json({"msg": a.msg, "kind": a.kind, "choices": [], "contexte": "", "menu": None,
+                               "panneau": True})
         cs, _ = self._lire_choix(a, ecran)
         menu = None if cs else choices_mod.parse_menu(ecran)
         self._json({"msg": a.msg, "kind": a.kind, "choices": [asdict(c) for c in cs],

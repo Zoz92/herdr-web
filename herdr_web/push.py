@@ -133,6 +133,9 @@ class Push:
                 log.warning("envoi push impossible (%s)", type(e).__name__)
         if gone:
             self._remove(gone)
+        # sans cette ligne, impossible de savoir si un « clear » est parti (enquête du 2026-11-17)
+        log.info("push %s %s : %d/%d", "clear" if "clear" in charge else "attente",
+                 charge.get("clear") or charge.get("addr") or "?", ok, len(subs))
         return ok
 
 

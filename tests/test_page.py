@@ -178,6 +178,14 @@ def test_m5_m7_sous_agents_finis_masques_et_role_deduit():
     assert d["pastilles"] == ["role marteau anime", "role loupe", "role claude anime", "role revue anime"]
 
 
+def test_tache_shell_de_fond_montree_sans_lien():
+    """Un clic sur une tâche Bash de fond ouvrait un fil de sous-agent inexistant (404) : elle
+    reste visible, avec l'icône >_, mais n'est plus un lien, ni dans le menu ni en pastille."""
+    d = banc("tacheShell")
+    assert d["menu"] == [["a", "#/a/t1/s/a1", "role revue anime"], ["span", None, "role shell anime"]]
+    assert d["pastilles"] == [["a", "#/a/t1/s/a1", "role revue anime"], ["span", None, "role shell anime"]]
+
+
 @pytest.mark.parametrize("scenario", ["saisie-cote", "nouvel-agent", "fusion", "divers"])
 def test_temoin_la_page_d_avant_echoue(tmp_path, scenario):
     """Témoin : chaque scénario du fix round 1 rend un autre résultat sur la page d'avant (bcdd3d8)."""
@@ -333,6 +341,22 @@ def test_image_collee_dans_claude_code_montree():
     d = banc("image-collee")
     assert d["srcs"] == ["/api/collee/" + "ab" * 32]
     assert "[Image #1] vois" in d["textes"]
+
+
+def test_plusieurs_photos_toutes_montrees():
+    """Plusieurs photos envoyées du téléphone : seule la 1re apparaissait dans le fil (2026-11-17)."""
+    q = "/api/image?p="
+    assert banc("photos-multiples")["srcs"] == [q + "%2Ff%2Fa.png", q + "%2Ff%2Fb.png", q + "%2Ff%2Fe.png"]
+
+
+def test_panneau_btw_se_ferme_par_un_bouton_ou_echap():
+    """/btw dans herdr-web (2026-11-17) : la carte proposait la liste de la réponse comme choix,
+    et Échap ne passait pas (agent `blocked`)."""
+    d = banc("btw-panneau")
+    assert d["boutons"] == ["Fermer le panneau (Échap)"] and d["cachee"] is False
+    assert d["clic"] == ["esc"] and d["cacheeApresClic"] is True
+    assert d["echapPrevenu"] is True and d["echap"] == ["esc"]
+    assert d["dialogueEchap"] == [False, []]
 
 
 def test_appui_long_ni_tap_court_rafraichi_ni_tremblement():

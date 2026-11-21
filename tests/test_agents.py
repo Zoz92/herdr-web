@@ -480,6 +480,24 @@ def test_modele_d_un_sous_agent_par_son_transcript(tmp_path):
     assert [s["model"] for s in b.snapshot()[0].subagents] == ["claude-haiku-4-5", None]
 
 
+def test_tache_shell_de_fond_marquee_shell(tmp_path):
+    """hc range aussi dans `records` les commandes Bash lancées en fond (id « b… », mesuré le
+    2026-11-21 : « Attendre la fin de la CI de la PR 36 ») : pas de journal de sous-agent, donc
+    rien à ouvrir. Session résolue mais journal absent : rôle « shell », que la page ne lie pas."""
+    d = _session(tmp_path)
+    sub = d / "s1" / "subagents"
+    sub.mkdir(parents=True)
+    (sub / "agent-a2db.jsonl").write_text(_assistant("claude-haiku-4-5"))
+    t = term("t1", "working")
+    t["records"] = {"a2db": {"state": "working", "title": "Relire"},
+                    "bympx1i41": {"state": "working", "title": "Attendre la fin de la CI de la PR 36"}}
+    b = AgentBoard(FakeHc([t]), layout=lambda: None, home=tmp_path, branches=_SansGit())
+    b.refresh()
+    subs = {s["id"]: s for s in b.snapshot()[0].subagents}
+    assert (subs["a2db"]["role"], subs["a2db"]["role_infere"]) == ("reviewer", True)
+    assert (subs["bympx1i41"]["role"], subs["bympx1i41"]["role_infere"]) == ("shell", False)
+
+
 def test_decompte_par_modele():
     from herdr_web.agents import Agent, model_counts
 

@@ -794,6 +794,21 @@ const SCENARIOS = {
       textes: v.flux.querySelectorAll(".bulle.moi").map((b) => b.textContent) };
   },
 
+  // plusieurs photos dans un message : toutes montrées (seule la 1re l'était, 2026-11-17) ; un chemin
+  // relatif ou une URL n'en fait jamais une ; un ancien serveur n'envoie que `image`
+  async "photos-multiples"() {
+    reponses = serveurDeBase;
+    S().agents = [agent("t1")];
+    S().spaces = SPACES;
+    run(`squelette(); rendreCote(); ouvrirAgent("t1", null);`);
+    await souffle();
+    const v = S().vue;
+    run(`ajouterItems(S.vue, ${JSON.stringify([
+      { role: "moi", text: "deux", image: "/f/a.png", images: ["/f/a.png", "/f/b.png", "//x/c.png", "d.png"], ts: "2026-11-17T10:00:00Z" },
+      { role: "moi", text: "ancien", image: "/f/e.png", ts: "2026-11-17T10:00:01Z" }])});`);
+    return { srcs: v.flux.querySelectorAll("img").map((i) => i.src) };
+  },
+
   // message tapé par hc : à gauche, signé par l'agent émetteur, jamais par l'utilisateur ; nom affiché lu du serveur
   async "hc-attribution"() {
     reponses = serveurDeBase;
@@ -1313,6 +1328,21 @@ const SCENARIOS = {
     return out;
   },
 
+  // tâche Bash de fond rangée par hc parmi les records (mesuré le 2026-11-21) : montrée, jamais liée
+  async tacheShell() {
+    reponses = serveurDeBase;
+    S().agents = [agent("t1", { subagents: [
+      { id: "a1", title: "Relire", state: "working", role: "reviewer", role_infere: true },
+      { id: "bympx1i41", title: "Attendre la CI", state: "working", role: "shell", role_infere: false }] })];
+    run(`squelette(); rendreCote();`);
+    const decrit = (n) => [n.tagName.toLowerCase(), n.href || null,
+      ((i) => (i ? i.className : null))(n.querySelector("svg.role"))];
+    const out = { menu: S().liste.querySelectorAll(".sous-agent").map(decrit) };
+    run(`ouvrirAgent("t1", null);`);
+    out.pastilles = S().panneau.querySelectorAll(".pastille-sous").map(decrit);
+    return out;
+  },
+
   // logo d'OS de la 3e ligne (logoOs) : fichier choisi par la clé `os`, PNG pour glfos, repli générique,
   // clé hostile refusée, badge Windows sous WSL
   async logosOs() {
@@ -1615,6 +1645,46 @@ const SCENARIOS = {
     parTexte(v.carte, "button", "Cartes").click();
     await souffle();
     out.corps = appels.filter((a) => a[0] === "POST").map((a) => a[2]);
+    return out;
+  },
+
+  // panneau /btw ouvert (2026-11-17) : agent `blocked` « dialog open » ; la carte ne montre pas la liste
+  // numérotée de la réponse, un seul bouton le ferme (POST keys esc), la touche Échap du PC aussi
+  async "btw-panneau"() {
+    reponses = (m, chemin) => {
+      if (chemin.endsWith("/choices")) return { msg: "dialog open", kind: null, menu: null, contexte: "", choices: [], panneau: true };
+      if (chemin.endsWith("/keys")) return { ok: true };
+      return serveurDeBase(m, chemin);
+    };
+    const v = await ouvrirBloque();
+    const keys = () => appels.filter((a) => a[1].endsWith("/keys")).map((a) => a[2].key);
+    const echap = () => {
+      const e = { key: "Escape", ctrlKey: false, shiftKey: false, altKey: false, metaKey: false, defaultPrevented: false,
+        preventDefault() { this.defaultPrevented = true; }, stopPropagation() {} };
+      for (const f of document.ecouteurs.keydown || []) f(e);
+      return e.defaultPrevented;
+    };
+    const out = { boutons: v.carte.querySelectorAll("button").map((b) => b.textContent), cachee: v.carte.hidden };
+    v.carte.querySelector("button").click();
+    await souffle();
+    out.clic = keys();
+    out.cacheeApresClic = v.carte.hidden;
+    run("chargerChoix()"); // le panneau est encore là (Échap pas encore lu par le terminal)
+    await souffle();
+    appels.length = 0;
+    out.echapPrevenu = echap();
+    await souffle();
+    out.echap = keys();
+    // un vrai dialogue (permission) : Échap du PC ne part pas au terminal
+    reponses = (m, chemin) => {
+      if (chemin.endsWith("/choices")) return { msg: "Allow?", kind: null, menu: null, contexte: "",
+        choices: [{ digit: "1", label: "Yes", detail: "" }, { digit: "2", label: "No", detail: "" }] };
+      return serveurDeBase(m, chemin);
+    };
+    run("chargerChoix()");
+    await souffle();
+    appels.length = 0;
+    out.dialogueEchap = [echap(), keys()];
     return out;
   },
 
